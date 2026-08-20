@@ -11,9 +11,69 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
+enum Role{
+  USER
+  ADMIN 
+}
 model User{
   id String @id @default(uuid())
   email String @unique
   password String?
+  name String?
+  role Role @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  session Session[]
+  refreshToken RefreshToken[]
+  oauthAccounts OAuthAccount[]
+}
+
+model Session{
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expiresAt DateTime
+  revokedAt DateTime?
+  ipAddress String?
+  userAgent String?
+
+  refreshToken RefreshToken[]
+  @@index([userId])
+}
+
+model RefreshToken{
+  id String @id @default(uuid())
+
+  userId String
+  sessionId String
+
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+
+  session Session @relation(fields: [sessionId],references: [id],onDelete: Cascade)
+
+  tokenHash String @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+  replaceByTokenId String?
+
+  @@index([userId,sessionId])
+}
+
+model OAuthAccount{
+  id String @id @default(uuid())
+  userId String
+
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+
+  provider String
+  providerAccountId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
