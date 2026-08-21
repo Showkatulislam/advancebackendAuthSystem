@@ -22,4 +22,9 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Password is required.'),
 });
 
+export const accessTokenPayloadSchema = z.object({
+  sub: z.string().min(1),
+  role:z.enum(["USER","ADMIN"])
+})
+
 export type RegisterInput = z.infer<typeof registerSchema>;

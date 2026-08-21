@@ -18,3 +18,8 @@ export interface AuthUser {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface loginResponse{
+  accessToken: string,
+  user:AuthUser
+}

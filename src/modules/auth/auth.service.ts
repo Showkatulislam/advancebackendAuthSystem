@@ -2,7 +2,9 @@ import { hashPassword, verifyPassword } from '../../utils/password.js';
 import { AppError } from '../../utils/appError.js';
 import { IAuthRepository } from './auth.interface.js';
 import { authRepository } from './auth.repository.js';
-import { AuthUser, CreateUserData, RegisterInput } from './auth.types.js';
+import { AuthUser, CreateUserData, loginResponse, RegisterInput } from './auth.types.js';
+import { AccessTokenPayload } from '../../types/auth.js';
+import { generateAccessToken } from '../../utils/jwt.js';
 
 class AuthService {
     constructor(private readonly repo: IAuthRepository) { }
@@ -39,7 +41,7 @@ class AuthService {
         return user;
     }
 
-    async login(email: string, password: string): Promise<AuthUser> {
+    async login(email: string, password: string): Promise<loginResponse> {
         const user = await this.repo.findByEmail(email);
 
         if (!user) {
@@ -51,13 +53,23 @@ class AuthService {
         if (!isPasswordValid) {
             throw new AppError(401, "Invalid email or password")
         }
+
+        const payload: AccessTokenPayload = {
+            sub: user.id,
+            role:user.role
+        }
+        const accessToken = generateAccessToken(payload)
+        console.log("access",accessToken)
         return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt
+            accessToken,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            }
         };
     }
 }
