@@ -1,6 +1,7 @@
 import { app } from './app.js';
 import { env } from './config/env.js';
 import { logger } from './lib/logger.js';
+import { startAuthCleanupJob } from './modules/auth/auth.cleanup.job.js';
 
 const startServer = async (): Promise<void> => {
   try {
@@ -12,6 +13,8 @@ const startServer = async (): Promise<void> => {
         'Auth service started',
       );
     });
+
+    startAuthCleanupJob();
 
     const shutdown = async (signal: string): Promise<void> => {
       logger.info({ signal }, 'Shutdown initiated');

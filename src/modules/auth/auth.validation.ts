@@ -18,13 +18,21 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.string().trim().email('Please Provide a valid email eddress.'),
+  email: z
+    .string()
+    .trim()
+    .email('Please provide a valid email address.')
+    .transform((email) => email.toLowerCase()),
+
   password: z.string().min(1, 'Password is required.'),
 });
 
 export const accessTokenPayloadSchema = z.object({
   sub: z.string().min(1),
-  role:z.enum(["USER","ADMIN"])
-})
+  role: z.enum(['USER', 'ADMIN']),
+});
 
+export const refreshTokenSchema = z.object({
+  refreshToken: z.string().min(1),
+});
 export type RegisterInput = z.infer<typeof registerSchema>;

@@ -99,12 +99,16 @@ export type SessionScalarFieldEnum =
 export const RefreshTokenScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  sessionId: 'sessionId',
+  familyId: 'familyId',
   tokenHash: 'tokenHash',
+  jti: 'jti',
   expiresAt: 'expiresAt',
   revokedAt: 'revokedAt',
+  deviceName: 'deviceName',
+  userAgent: 'userAgent',
+  ipAddress: 'ipAddress',
   createdAt: 'createdAt',
-  replaceByTokenId: 'replaceByTokenId',
+  updatedAt: 'updatedAt',
 } as const;
 
 export type RefreshTokenScalarFieldEnum =
